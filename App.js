@@ -5,6 +5,7 @@ import { store } from "./store";
 import HomeScreen from "./screens/HomeScreen";
 import PlanRideScreen from "./screens/PlanRideScreen";
 import ComparePricesScreen from "./screens/ComparePricesScreen";
+import LoginScreen from "./screens/LoginScreen";
 import "react-native-gesture-handler";
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -18,6 +19,13 @@ export default function App() {
       <NavigationContainer>
         <SafeAreaProvider>
           <Stack.Navigator>
+            <Stack.Screen 
+              name="LoginScreen"
+              component={LoginScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
             <Stack.Screen 
               name="HomeScreen"
               component={HomeScreen}
