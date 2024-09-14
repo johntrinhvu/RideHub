@@ -12,8 +12,6 @@ import { setDestination, setOrigin } from "../slices/navSlice";
 
 const PlanRideScreen = () => {
     const dispatch = useDispatch();
-    // const [location, setLocation] = useState('');
-    // const [destination, setDestination] = useState('');
     const bottomSheetRef = useRef(null);
     const snapPoints = useMemo(() => ['25%', '50%', '75%'], []);
 
@@ -39,11 +37,9 @@ const PlanRideScreen = () => {
                                 <Icon name="location-on" size={24} color="#97BAE4" />
                                 <TextInput
                                     style={styles.input}
-                                    placeholder="Current Location"
+                                    placeholder="Enter your starting point"
                                     placeholderTextColor="#97BAE4"
                                     fontWeight="bold"
-                                    value={location}
-                                    onChangeText={setLocation}
                                 />
                             </View>
                             <View style={styles.separator} />
@@ -53,8 +49,6 @@ const PlanRideScreen = () => {
                                     style={styles.input}
                                     placeholder="Destination"
                                     placeholderTextColor="#627892"
-                                    value={destination}
-                                    onChangeText={setDestination}
                                     fontWeight="bold"
                                 />
                             </View>
