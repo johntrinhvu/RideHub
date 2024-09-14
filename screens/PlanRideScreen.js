@@ -5,9 +5,15 @@ import { useNavigation } from "@react-navigation/native";
 import TopRowPlanRide from "../components/TopRowPlanRide";
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Make sure to install this package
 import LocationList from "../components/LocationList";
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { GOOGLE_MAPS_APIKEY } from "@env";
+import { useDispatch } from "react-redux";
+import { setDestination, setOrigin } from "../slices/navSlice";
+
 const PlanRideScreen = () => {
-    const [location, setLocation] = useState('');
-    const [destination, setDestination] = useState('');
+    const dispatch = useDispatch();
+    // const [location, setLocation] = useState('');
+    // const [destination, setDestination] = useState('');
     const bottomSheetRef = useRef(null);
     const snapPoints = useMemo(() => ['25%', '50%', '75%'], []);
 
@@ -56,6 +62,47 @@ const PlanRideScreen = () => {
                         <View style={styles.locationList}>
                             <LocationList/>
                         </View>
+                        {/* <TextInput
+                            style={styles.input}
+                            placeholder="Enter your location"
+                            value={location}
+                            onChangeText={setLocation}
+                        /> */}
+                        <GooglePlacesAutocomplete
+                            placeholder="Enter your location"
+                            styles={{
+                                container: {
+                                    flex: 0,
+                                },
+                                textInput: {
+                                    fontSize: 18,
+                                },
+                            }}
+                            onPress={(data, details = null) => {
+                                dispatch(setOrigin({
+                                    location: details.geometry.location,
+                                    desription: data.description
+                                }))
+
+                                dispatch(setDestination(null));
+                            }}
+                            fetchDetails={true}
+                            returnKeyType={"search"}
+                            enablePoweredByContainer={false}
+                            minLength={2}
+                            query={{
+                                key: GOOGLE_MAPS_APIKEY,
+                                langauge: 'en',
+                            }}
+                            nearbyPlacesAPI="GooglePlacesSearch"
+                            debounce={400}
+                        />
+                        {/* <TextInput
+                            style={styles.input}
+                            placeholder="Enter your destination"
+                            value={destination}
+                            onChangeText={setDestination}
+                        /> */}
                     </View>
                 </View>
             </BottomSheet>

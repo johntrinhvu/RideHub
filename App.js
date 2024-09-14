@@ -25,13 +25,13 @@ export default function App() {
                 headerShown: false,
               }}
             />
-            <Stack.Screen 
+            { <Stack.Screen   
               name="PlanRideScreen"
               component={PlanRideScreen}
               options={{
                 headerShown: false,
               }}
-            />
+            /> }
             <Stack.Screen   
               name="ComparePricesScreen"
               component={ComparePricesScreen}
