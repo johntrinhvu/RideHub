@@ -1,6 +1,10 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { StyleSheet, Text, View, SafeAreaView, TextInput } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, TextInput, TouchableOpacity } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { useNavigation } from "@react-navigation/native";
+import TopRowPlanRide from "../components/TopRowPlanRide";
+import Icon from 'react-native-vector-icons/MaterialIcons'; // Make sure to install this package
+import LocationList from "../components/LocationList";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { GOOGLE_MAPS_APIKEY } from "@env";
 import { useDispatch } from "react-redux";
@@ -20,16 +24,44 @@ const PlanRideScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
             <Text>Map will be displayed here</Text>
-            
             <BottomSheet
                 ref={bottomSheetRef}
                 index={1}
                 snapPoints={snapPoints}
                 onChange={handleSheetChanges}
+                backgroundStyle={styles.bottomSheetBackground}
             >
                 <View style={styles.contentContainer}>
-                    <Text style={styles.title}>Plan Your Ride</Text>
+                    <TopRowPlanRide/>
                     <View style={styles.inputContainer}>
+                        <View style={styles.combinedInputBox}>
+                            <View style={styles.inputRow}>
+                                <Icon name="location-on" size={24} color="#97BAE4" />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Current Location"
+                                    placeholderTextColor="#97BAE4"
+                                    fontWeight="bold"
+                                    value={location}
+                                    onChangeText={setLocation}
+                                />
+                            </View>
+                            <View style={styles.separator} />
+                            <View style={styles.inputRow}>
+                                <Icon name="flag" size={24} color="#97BAE4" />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Destination"
+                                    placeholderTextColor="#627892"
+                                    value={destination}
+                                    onChangeText={setDestination}
+                                    fontWeight="bold"
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.locationList}>
+                            <LocationList/>
+                        </View>
                         {/* <TextInput
                             style={styles.input}
                             placeholder="Enter your location"
@@ -72,7 +104,6 @@ const PlanRideScreen = () => {
                             onChangeText={setDestination}
                         /> */}
                     </View>
-                    {/* Add additional ride planning options here */}
                 </View>
             </BottomSheet>
         </SafeAreaView>
@@ -87,23 +118,42 @@ const styles = StyleSheet.create({
     contentContainer: {
         flex: 1,
         padding: 16,
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 16,
+        paddingTop: 5, // Reduced top padding
     },
     inputContainer: {
-        width: '100%',
-        marginBottom: 20,
+        width: '90%', // Adjust this value as needed
+        marginTop: 20,
+        alignSelf: 'center', // This centers the container
+    },
+    combinedInputBox: {
+        borderWidth: 1,
+        borderColor: '#97BAE4',
+        borderRadius: 12,
+        overflow: 'hidden',
+        backgroundColor: 'rgba(151, 186, 228, 0.1)', // Light blue with opacity
+    },
+    inputRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 12,
+        paddingVertical: 10,
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 16,
+        flex: 1,
+        padding: 16, // Increase padding
+        color: '#fff', // Assuming you want white text
+        fontSize: 16,
     },
+    separator: {
+        height: 1,
+        backgroundColor: '#97BAE4',
+    },
+    bottomSheetBackground: {
+        backgroundColor: '#161B21',
+    },
+    placeholder: {
+        fontWeight: 'bold',
+    }
 });
 
 export default PlanRideScreen;
