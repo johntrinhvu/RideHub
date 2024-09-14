@@ -15,7 +15,7 @@ const TopRowPlanRide = () => {
                 />
             </View>
             <View style={styles.titleContainer}>
-                <Text style={styles.title}>Plan Your Ride</Text>
+                <Text style={styles.title}>Planning Your Ride</Text>
             </View>
             <View style={styles.backButtonContainer} />
         </View>

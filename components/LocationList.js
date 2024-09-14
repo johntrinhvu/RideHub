@@ -7,10 +7,17 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const LocationList = () => {
     return (
-        <View>
-            <Text>Location List</Text>
+        <View style={styles.container}>
+            
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 24,
+    },
+});
 
 export default LocationList;
