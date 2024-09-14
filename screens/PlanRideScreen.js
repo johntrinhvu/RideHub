@@ -9,6 +9,7 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { GOOGLE_MAPS_APIKEY } from "@env";
 import { useDispatch } from "react-redux";
 import { setDestination, setOrigin } from "../slices/navSlice";
+import MapComponent from "../components/MapComponent";
 
 const PlanRideScreen = () => {
     const dispatch = useDispatch();
@@ -20,94 +21,104 @@ const PlanRideScreen = () => {
     }, []);
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Text>Map will be displayed here</Text>
-            <BottomSheet
-                ref={bottomSheetRef}
-                index={1}
-                snapPoints={snapPoints}
-                onChange={handleSheetChanges}
-                backgroundStyle={styles.bottomSheetBackground}
-            >
-                <View style={styles.contentContainer}>
-                    <TopRowPlanRide/>
-                    <View style={styles.inputContainer}>
-                        <View style={styles.combinedInputBox}>
-                            <View style={styles.inputRow}>
-                                <Icon name="location-on" size={24} color="#97BAE4" />
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Enter your starting point"
-                                    placeholderTextColor="#97BAE4"
-                                    fontWeight="bold"
-                                />
-                            </View>
-                            <View style={styles.separator} />
-                            <View style={styles.inputRow}>
-                                <Icon name="flag" size={24} color="#97BAE4" />
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Destination"
-                                    placeholderTextColor="#627892"
-                                    fontWeight="bold"
-                                />
-                            </View>
-                        </View>
-                        <View style={styles.locationList}>
-                            <LocationList/>
-                        </View>
-                        {/* <TextInput
-                            style={styles.input}
-                            placeholder="Enter your location"
-                            value={location}
-                            onChangeText={setLocation}
-                        /> */}
-                        <GooglePlacesAutocomplete
-                            placeholder="Enter your location"
-                            styles={{
-                                container: {
-                                    flex: 0,
-                                },
-                                textInput: {
-                                    fontSize: 18,
-                                },
-                            }}
-                            onPress={(data, details = null) => {
-                                dispatch(setOrigin({
-                                    location: details.geometry.location,
-                                    desription: data.description
-                                }))
+        <View style={styles.container}>
+            <MapComponent />
+            <SafeAreaView style={styles.safeArea}>
 
-                                dispatch(setDestination(null));
-                            }}
-                            fetchDetails={true}
-                            returnKeyType={"search"}
-                            enablePoweredByContainer={false}
-                            minLength={2}
-                            query={{
-                                key: GOOGLE_MAPS_APIKEY,
-                                langauge: 'en',
-                            }}
-                            nearbyPlacesAPI="GooglePlacesSearch"
-                            debounce={400}
-                        />
-                        {/* <TextInput
-                            style={styles.input}
-                            placeholder="Enter your destination"
-                            value={destination}
-                            onChangeText={setDestination}
-                        /> */}
+                <BottomSheet
+                    ref={bottomSheetRef}
+                    index={1}
+                    snapPoints={snapPoints}
+                    onChange={handleSheetChanges}
+                    backgroundStyle={styles.bottomSheetBackground}
+                >
+                    <View style={styles.contentContainer}>
+                        <TopRowPlanRide/>
+                        <View style={styles.inputContainer}>
+                            <View style={styles.combinedInputBox}>
+                                <View style={styles.inputRow}>
+                                    <Icon name="location-on" size={24} color="#97BAE4" />
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Current Location"
+                                        placeholderTextColor="#97BAE4"
+                                        fontWeight="bold"
+                                    />
+                                </View>
+                                <View style={styles.separator} />
+                                <View style={styles.inputRow}>
+                                    <Icon name="flag" size={24} color="#97BAE4" />
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Destination"
+                                        placeholderTextColor="#627892"
+                                        fontWeight="bold"
+                                    />
+                                </View>
+                            </View>
+                            <View style={styles.locationList}>
+                                <LocationList/>
+                            </View>
+                            {/* <TextInput
+                                style={styles.input}
+                                placeholder="Enter your location"
+                                value={location}
+                                onChangeText={setLocation}
+                            /> */}
+                            <GooglePlacesAutocomplete
+                                placeholder="Enter your location"
+                                styles={{
+                                    container: {
+                                        flex: 0,
+                                    },
+                                    textInput: {
+                                        fontSize: 18,
+                                    },
+                                }}
+                                onPress={(data, details = null) => {
+                                    dispatch(setOrigin({
+                                        location: details.geometry.location,
+                                        desription: data.description
+                                    }))
+
+                                    dispatch(setDestination(null));
+                                }}
+                                fetchDetails={true}
+                                returnKeyType={"search"}
+                                enablePoweredByContainer={false}
+                                minLength={2}
+                                query={{
+                                    key: GOOGLE_MAPS_APIKEY,
+                                    langauge: 'en',
+                                }}
+                                nearbyPlacesAPI="GooglePlacesSearch"
+                                debounce={400}
+                            />
+                            {/* <TextInput
+                                style={styles.input}
+                                placeholder="Enter your destination"
+                                value={destination}
+                                onChangeText={setDestination}
+                            /> */}
+                        </View>
                     </View>
-                </View>
-            </BottomSheet>
-        </SafeAreaView>
+                </BottomSheet>
+            </SafeAreaView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 24,
+    },
+    safeArea: {
+        flex: 1,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
     },
     contentContainer: {
         flex: 1,
