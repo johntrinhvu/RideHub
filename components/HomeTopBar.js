@@ -6,9 +6,9 @@ const HomeTopBar = () => {
   return (
     <View
         style={{ backgroundColor: "rgb(22, 27, 33)" }}
-        className="p-4 pt-10 rounded-lg"
+        className="p-4 pt-10"
     >
-      <Text className="text-white ml-2 text-2xl font-bold pt-8">Hi, John.</Text>
+      <Text className="text-white ml-2 text-2xl font-bold">Hello, user.</Text>
       <MainSearch />
       
     </View>
