@@ -39,11 +39,11 @@ export default function App() {
                 }}
               />
               <Stack.Screen   
-                name="ComparePricesScreen"
-                component={ComparePricesScreen}
-                options={{
+                  name="ComparePricesScreen"
+                  component={ComparePricesScreen}
+                  options={{
                   headerShown: false,
-                }}
+                  }}
               />
             </Stack.Navigator>
           </KeyboardAvoidingView>

@@ -10,11 +10,16 @@ import { GOOGLE_MAPS_APIKEY } from "@env";
 import { useDispatch } from "react-redux";
 import { setDestination, setOrigin } from "../slices/navSlice";
 import MapComponent from "../components/MapComponent";
+import { createStackNavigator } from "@react-navigation/stack";
+import { NavigationContainer } from '@react-navigation/native';
+import ComparePricesScreen from "../screens/ComparePricesScreen";
 
 const PlanRideScreen = () => {
     const dispatch = useDispatch();
     const bottomSheetRef = useRef(null);
     const snapPoints = useMemo(() => [ '30%', '93%'], []);
+    const Stack = createStackNavigator();
+    const navigation = useNavigation();
 
     const handleSheetChanges = useCallback((index) => {
         console.log('handleSheetChanges', index);
@@ -82,7 +87,7 @@ const PlanRideScreen = () => {
                                             placeholderTextColor: '#627892',
                                         }}
                                         onPress={(data, details = null) => {
-                                            dispatch(setDestination({
+                                            dispatch(setOrigin({
                                                 location: details.geometry.location,
                                                 description: data.description
                                             }))
@@ -150,6 +155,8 @@ const PlanRideScreen = () => {
                                                 location: details.geometry.location,
                                                 description: data.description
                                             }))
+
+                                            navigation.navigate('ComparePricesScreen');
                                         }}
                                         fetchDetails={true}
                                         returnKeyType={"search"}

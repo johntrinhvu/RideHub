@@ -12,6 +12,11 @@ const MapComponent = () => {
   const mapRef = useRef(null);
   const dispatch = useDispatch();
 
+  if (origin && destination) {
+    console.log("Origin: " + origin.description);
+    console.log(destination.description);
+  }
+
   useEffect(() => {
     if (!origin || !destination) return;
 
@@ -33,8 +38,9 @@ const MapComponent = () => {
       .then(data => {
         dispatch(setTravelTimeInformation(data.rows[0].elements[0]));
       })
-      
-    }
+    };
+
+    getTravelTime();
   })
 
   return (
