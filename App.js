@@ -18,7 +18,7 @@ export default function App() {
       <NavigationContainer>
         <SafeAreaProvider>
           <Stack.Navigator>
-            <Stack.Screen 
+            {/* <Stack.Screen 
               name="HomeScreen"
               component={HomeScreen}
               options={{
@@ -31,8 +31,8 @@ export default function App() {
               options={{
                 headerShown: false,
               }}
-            /> }
-            <Stack.Screen 
+            /> } */}
+            <Stack.Screen   
               name="ComparePricesScreen"
               component={ComparePricesScreen}
               options={{
