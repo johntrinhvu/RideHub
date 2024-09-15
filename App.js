@@ -6,22 +6,18 @@ import { store } from "./store";
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createStackNavigator } from "@react-navigation/stack";
-<<<<<<< HEAD
 import LottieView from 'lottie-react-native';
-
 
 // Import your existing screens
 import HomeScreen from "./screens/HomeScreen";
 import PlanRideScreen from "./screens/PlanRideScreen";
 import ComparePricesScreen from "./screens/ComparePricesScreen";
 import LoginScreen from "./screens/LoginScreen";
-<<<<<<< HEAD
 import "react-native-gesture-handler";
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "./screens/LoginScreen2";
-=======
 
 const Stack = createStackNavigator();
 
@@ -53,9 +49,6 @@ const SplashAnimation = ({ onAnimationComplete }) => {
     </Animated.View>
   );
 };
-=======
-import LoginScreen from "./screens/LoginScreen2";
->>>>>>> 9dd4790 (dsada)
 
 export default function App() {
   const [showAnimation, setShowAnimation] = useState(true);
@@ -69,7 +62,6 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <SafeAreaProvider>
-<<<<<<< HEAD
           <KeyboardAvoidingView 
             style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -106,38 +98,6 @@ export default function App() {
               />
             </Stack.Navigator>
           </KeyboardAvoidingView>
-=======
-          <Stack.Navigator>
-            <Stack.Screen 
-              name="LoginScreen"
-              component={LoginScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen 
-              name="HomeScreen"
-              component={HomeScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-            { <Stack.Screen   
-              name="PlanRideScreen"
-              component={PlanRideScreen}
-              options={{
-                headerShown: false,
-              }}
-            /> }
-            <Stack.Screen   
-              name="ComparePricesScreen"
-              component={ComparePricesScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-          </Stack.Navigator>
->>>>>>> 9dd4790 (dsada)
         </SafeAreaProvider>
       </NavigationContainer>
     </Provider>
