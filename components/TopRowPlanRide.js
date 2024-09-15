@@ -2,14 +2,23 @@ import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
+import { resetNavigation } from "../slices/navSlice";
 
 const TopRowPlanRide = () => {
     const navigation = useNavigation();
+    const dispatch = useDispatch();
+
+    const handleBack = () => {
+        dispatch(resetNavigation());
+        navigation.goBack();
+    }
+
     return (
         <View style={styles.topRowPlanRide}>
             <TouchableOpacity
                 style={styles.backButtonContainer}
-                onPress={() => navigation.goBack()}
+                onPress={handleBack}
             >
                 <Ionicons name="arrow-back" size={24} color="#97BAE4" />
             </TouchableOpacity>
