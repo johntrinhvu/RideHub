@@ -1,4 +1,4 @@
-##RideHub: Compare Uber and Lyft Prices
+## RideHub: Compare Uber and Lyft Prices
 Project Overview
 RideHub is a mobile app that empowers users to make smarter, cost-effective travel choices by seamlessly comparing Uber and Lyft prices. The goal is to help users quickly determine the best option for their journey, ensuring faster and cheaper rides based on preferences like distance and destination.
 
@@ -43,7 +43,7 @@ XCode Issues: Installation and configuration of XCode for iOS development proved
 Team
 
 
-###This project was developed by:
+### This project was developed by:
 Alton Lin
 Emily Tran
 John Vu
