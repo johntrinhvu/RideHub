@@ -14,10 +14,6 @@ import PlanRideScreen from "./screens/PlanRideScreen";
 import ComparePricesScreen from "./screens/ComparePricesScreen";
 import LoginScreen from "./screens/LoginScreen";
 import "react-native-gesture-handler";
-import { NavigationContainer } from '@react-navigation/native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { createStackNavigator } from "@react-navigation/stack";
-import LoginScreen from "./screens/LoginScreen2";
 
 const Stack = createStackNavigator();
 
