@@ -24,13 +24,13 @@ export default function App() {
             keyboardVerticalOffset={Platform.OS === "ios" ? -64 : 0}
           >
             <Stack.Navigator>
-              <Stack.Screen 
+              {/* <Stack.Screen 
                 name="HomeScreen"
                 component={HomeScreen}
                 options={{
                   headerShown: false,
                 }}
-              />
+              /> */}
               <Stack.Screen   
                 name="PlanRideScreen"
                 component={PlanRideScreen}
