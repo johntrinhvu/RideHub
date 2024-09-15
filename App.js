@@ -9,6 +9,7 @@ import "react-native-gesture-handler";
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createStackNavigator } from "@react-navigation/stack";
+import LoginScreen from "./screens/LoginScreen2";
 
 export default function App() {
   const Stack = createStackNavigator();
@@ -18,6 +19,13 @@ export default function App() {
       <NavigationContainer>
         <SafeAreaProvider>
           <Stack.Navigator>
+            <Stack.Screen 
+              name="LoginScreen"
+              component={LoginScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
             <Stack.Screen 
               name="HomeScreen"
               component={HomeScreen}

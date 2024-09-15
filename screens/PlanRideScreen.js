@@ -24,7 +24,6 @@ const PlanRideScreen = () => {
         <View style={styles.container}>
             <MapComponent />
             <SafeAreaView style={styles.safeArea}>
-
                 <BottomSheet
                     ref={bottomSheetRef}
                     index={1}
