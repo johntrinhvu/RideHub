@@ -14,7 +14,7 @@ import MapComponent from "../components/MapComponent";
 const PlanRideScreen = () => {
     const dispatch = useDispatch();
     const bottomSheetRef = useRef(null);
-    const snapPoints = useMemo(() => ['25%', '50%', '75%'], []);
+    const snapPoints = useMemo(() => [ '30%', '93%'], []);
 
     const handleSheetChanges = useCallback((index) => {
         console.log('handleSheetChanges', index);
@@ -38,68 +38,135 @@ const PlanRideScreen = () => {
                             <View style={styles.combinedInputBox}>
                                 <View style={styles.inputRow}>
                                     <Icon name="location-on" size={24} color="#97BAE4" />
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="Current Location"
-                                        placeholderTextColor="#97BAE4"
-                                        fontWeight="bold"
+                                    <GooglePlacesAutocomplete
+                                        placeholder="Enter your starting location"
+                                        styles={{
+                                            container: {
+                                                flex: 1,
+                                                marginLeft: 10,
+                                                marginRight: 10,
+                                            },
+                                            textInput: {
+                                                backgroundColor: 'transparent',
+                                                color: 'white',
+                                                fontWeight: 'bold',
+                                                fontSize: 16,
+                                            },
+                                            textInputContainer: {
+                                                backgroundColor: 'transparent',
+                                                borderTopWidth: 0,
+                                                borderBottomWidth: 0,
+                                            },
+                                            listView: {
+                                                backgroundColor: 'rgba(22, 27, 33, 0.9)', // Dark background with slight transparency
+                                                borderRadius: 5,
+                                                marginTop: -5,
+                                            },
+                                            row: {
+                                                backgroundColor: 'transparent',
+                                                paddingVertical: 10,
+                                                marginHorizontal: 10,
+                                            },
+                                            separator: {
+                                                height: 1,
+                                                backgroundColor: 'rgba(151, 186, 228, 0.3)', // Light separator line
+                                            },
+                                            description: {
+                                                color: '#C3DCFB',
+                                                fontSize: 14,
+                                                fontWeight: 'bold',
+                                                marginLeft: -10,
+                                            },
+                                        }}
+                                        textInputProps={{
+                                            placeholderTextColor: '#627892',
+                                        }}
+                                        onPress={(data, details = null) => {
+                                            dispatch(setDestination({
+                                                location: details.geometry.location,
+                                                description: data.description
+                                            }))
+                                        }}
+                                        fetchDetails={true}
+                                        returnKeyType={"search"}
+                                        enablePoweredByContainer={false}
+                                        minLength={2}
+                                        query={{
+                                            key: GOOGLE_MAPS_APIKEY,
+                                            language: 'en',
+                                        }}
+                                        nearbyPlacesAPI="GooglePlacesSearch"
+                                        debounce={400}
                                     />
                                 </View>
                                 <View style={styles.separator} />
                                 <View style={styles.inputRow}>
                                     <Icon name="flag" size={24} color="#97BAE4" />
-                                    <TextInput
-                                        style={styles.input}
+                                    <GooglePlacesAutocomplete
                                         placeholder="Destination"
-                                        placeholderTextColor="#627892"
-                                        fontWeight="bold"
+                                        styles={{
+                                            container: {
+                                                flex: 1,
+                                                marginLeft: 10,
+                                                marginRight: 10,
+                                            },
+                                            textInput: {
+                                                backgroundColor: 'transparent',
+                                                color: 'white',
+                                                fontWeight: 'bold',
+                                                fontSize: 16,
+                                            },
+                                            textInputContainer: {
+                                                backgroundColor: 'transparent',
+                                                borderTopWidth: 0,
+                                                borderBottomWidth: 0,
+                                            },
+                                            listView: {
+                                                backgroundColor: 'rgba(22, 27, 33, 0.9)', // Dark background with slight transparency
+                                                borderRadius: 5,
+                                                marginTop: -5,
+                                            },
+                                            row: {
+                                                backgroundColor: 'transparent',
+                                                paddingVertical: 10,
+                                                marginHorizontal: 10,
+                                            },
+                                            separator: {
+                                                height: 1,
+                                                backgroundColor: 'rgba(151, 186, 228, 0.3)', // Light separator line
+                                            },
+                                            description: {
+                                                color: '#C3DCFB',
+                                                fontSize: 14,
+                                                fontWeight: 'bold',
+                                                marginLeft: -10,
+                                            },
+                                        }}
+                                        textInputProps={{
+                                            placeholderTextColor: '#627892',
+                                        }}
+                                        onPress={(data, details = null) => {
+                                            dispatch(setDestination({
+                                                location: details.geometry.location,
+                                                description: data.description
+                                            }))
+                                        }}
+                                        fetchDetails={true}
+                                        returnKeyType={"search"}
+                                        enablePoweredByContainer={false}
+                                        minLength={2}
+                                        query={{
+                                            key: GOOGLE_MAPS_APIKEY,
+                                            language: 'en',
+                                        }}
+                                        nearbyPlacesAPI="GooglePlacesSearch"
+                                        debounce={400}
                                     />
                                 </View>
                             </View>
                             <View style={styles.locationList}>
                                 <LocationList/>
                             </View>
-                            {/* <TextInput
-                                style={styles.input}
-                                placeholder="Enter your location"
-                                value={location}
-                                onChangeText={setLocation}
-                            /> */}
-                            <GooglePlacesAutocomplete
-                                placeholder="Enter your location"
-                                styles={{
-                                    container: {
-                                        flex: 0,
-                                    },
-                                    textInput: {
-                                        fontSize: 18,
-                                    },
-                                }}
-                                onPress={(data, details = null) => {
-                                    dispatch(setOrigin({
-                                        location: details.geometry.location,
-                                        desription: data.description
-                                    }))
-
-                                    dispatch(setDestination(null));
-                                }}
-                                fetchDetails={true}
-                                returnKeyType={"search"}
-                                enablePoweredByContainer={false}
-                                minLength={2}
-                                query={{
-                                    key: GOOGLE_MAPS_APIKEY,
-                                    langauge: 'en',
-                                }}
-                                nearbyPlacesAPI="GooglePlacesSearch"
-                                debounce={400}
-                            />
-                            {/* <TextInput
-                                style={styles.input}
-                                placeholder="Enter your destination"
-                                value={destination}
-                                onChangeText={setDestination}
-                            /> */}
                         </View>
                     </View>
                 </BottomSheet>
