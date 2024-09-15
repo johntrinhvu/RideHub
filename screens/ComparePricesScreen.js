@@ -4,14 +4,20 @@ import MapComponent from "../components/MapComponent";
 import BottomSheet from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from "react-redux";
+import { selectTravelTimeInformation } from '../slices/navSlice';
 
 const ComparePricesScreen = () => {
     const navigation = useNavigation();
     const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
+    const travelTimeInformation = useSelector(selectTravelTimeInformation);
+    const SURGE_CHARGE_RATE = 1.5;
+    const Uber = [];
+    const Lyft = [];
 
     const generateRandomPrice = () => Number((Math.random() * 30 + 10).toFixed(2));
     const generateRandomDistance = () => Number((Math.random() * 3 + 1).toFixed(1));
-    const generateRandomEta = () => Math.floor(Math.random() * 10 + 3);
+    const generateRandomEta = () => Math.floor(Math.random() * 10) + 3;
 
     const rideOptions = useMemo(() => {
         return Array(6).fill().map(() => ({
@@ -50,10 +56,16 @@ const ComparePricesScreen = () => {
                 >
                     <View style={styles.optionContent}>
                         <Text style={[styles.optionText, styles.price]}>
-                            ${option.price.toFixed(2)}
+                            {/* ${option.price.toFixed(2)} */}
+                            {new Intl.NumberFormat('en-us', {
+                                style: 'currency',
+                                currency: 'USD',
+                            }).format(
+                                (travelTimeInformation?.duration.value * SURGE_CHARGE_RATE * (0.5 / option.distance)) / 100
+                            )}
                         </Text>
                         <Text style={[styles.optionText, styles.eta, { color: getEtaColor(option.eta) }]}>
-                            {option.eta} min
+                            {option.eta} mins away
                         </Text>
                     </View>
                     {isSelected && (
@@ -113,9 +125,11 @@ const ComparePricesScreen = () => {
                             onPress={handleBackPress}
                         >
                             <Ionicons name="arrow-back" size={24} color="#97BAE4" />
-                            <Text style={styles.backText}>Back</Text>
                         </TouchableOpacity>
-                        <Text style={styles.headerTitle}>Choose a Ride</Text>
+                        <View className="flex flex-col items-center">
+                            <Text style={styles.headerTitle}>Choose a Ride - {travelTimeInformation?.distance.text}</Text>
+                            <Text className="text-white font-medium mt-1">{travelTimeInformation?.duration.text} ETA</Text>
+                        </View>
                     </View>
                     <ScrollView style={styles.rideOptionsContainer}>
                         {renderRideOptions(rideOptions)}
