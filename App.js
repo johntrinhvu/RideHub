@@ -6,6 +6,7 @@ import { store } from "./store";
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createStackNavigator } from "@react-navigation/stack";
+<<<<<<< HEAD
 import LottieView from 'lottie-react-native';
 
 
@@ -52,7 +53,9 @@ const SplashAnimation = ({ onAnimationComplete }) => {
     </Animated.View>
   );
 };
->>>>>>> ca20b53 (login)
+=======
+import LoginScreen from "./screens/LoginScreen2";
+>>>>>>> 9dd4790 (dsada)
 
 export default function App() {
   const [showAnimation, setShowAnimation] = useState(true);
@@ -66,6 +69,7 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <SafeAreaProvider>
+<<<<<<< HEAD
           <KeyboardAvoidingView 
             style={{ flex: 1 }}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -102,6 +106,38 @@ export default function App() {
               />
             </Stack.Navigator>
           </KeyboardAvoidingView>
+=======
+          <Stack.Navigator>
+            <Stack.Screen 
+              name="LoginScreen"
+              component={LoginScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen 
+              name="HomeScreen"
+              component={HomeScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+            { <Stack.Screen   
+              name="PlanRideScreen"
+              component={PlanRideScreen}
+              options={{
+                headerShown: false,
+              }}
+            /> }
+            <Stack.Screen   
+              name="ComparePricesScreen"
+              component={ComparePricesScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+          </Stack.Navigator>
+>>>>>>> 9dd4790 (dsada)
         </SafeAreaProvider>
       </NavigationContainer>
     </Provider>
