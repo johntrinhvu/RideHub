@@ -1,11 +1,13 @@
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { KeyboardAvoidingView, Platform } from 'react-native';
+import { KeyboardAvoidingView, Platform, Animated, Dimensions } from 'react-native';
 import { Provider } from "react-redux";
 import { store } from "./store";
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createStackNavigator } from "@react-navigation/stack";
 import LottieView from 'lottie-react-native';
+
 
 // Import your existing screens
 import HomeScreen from "./screens/HomeScreen";
@@ -38,6 +40,7 @@ const SplashAnimation = ({ onAnimationComplete }) => {
         resizeMode="contain"
         style={{ flex: 1 }}
         speed={1.7}
+        backgroundColor="#161B21"
       />
     </Animated.View>
   );
@@ -45,6 +48,7 @@ const SplashAnimation = ({ onAnimationComplete }) => {
 
 export default function App() {
   const [showAnimation, setShowAnimation] = useState(true);
+
 
   if (showAnimation) {
     return <SplashAnimation onAnimationComplete={() => setShowAnimation(false)} />;
