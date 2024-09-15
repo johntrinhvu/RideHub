@@ -7,6 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createStackNavigator } from "@react-navigation/stack";
 import LottieView from 'lottie-react-native';
+import LoginScreen from "./screens/LoginScreen";
 
 // Import your existing screens
 import HomeScreen from "./screens/HomeScreen";
