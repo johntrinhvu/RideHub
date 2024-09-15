@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
+import MapComponent from "../components/MapComponent";
 import BottomSheet from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -98,10 +99,7 @@ const ComparePricesScreen = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.mapContainer}>
-                <Text style={styles.mapPlaceholder}>Map View</Text>
-            </View>
-
+            <MapComponent />
             <BottomSheet
                 index={0}
                 snapPoints={snapPoints}
