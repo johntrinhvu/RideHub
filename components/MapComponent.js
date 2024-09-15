@@ -6,6 +6,7 @@ import MapViewDirections from 'react-native-maps-directions';
 import { GOOGLE_MAPS_APIKEY } from "@env";
 import darkModeStyle from "../components/darkModeStyle";
 
+
 const MapComponent = () => {
   const origin = useSelector(selectOrigin);
   const destination = useSelector(selectDestination);
