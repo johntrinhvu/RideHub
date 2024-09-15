@@ -170,7 +170,6 @@ const PlanRideScreen = () => {
                                 </View>
                             </View>
                             <View style={styles.locationList}>
-                                <LocationList/>
                             </View>
                         </View>
                     </View>
