@@ -51,6 +51,7 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#161B21', // Updated background color
     },
     loginContainer: {
         flex: 1,
