@@ -4,7 +4,6 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import { useNavigation } from "@react-navigation/native";
 import TopRowPlanRide from "../components/TopRowPlanRide";
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Make sure to install this package
-import LocationList from "../components/LocationList";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { GOOGLE_MAPS_APIKEY } from "@env";
 import { useDispatch } from "react-redux";
@@ -171,7 +170,6 @@ const PlanRideScreen = () => {
                                 </View>
                             </View>
                             <View style={styles.locationList}>
-                                <LocationList/>
                             </View>
                         </View>
                     </View>
