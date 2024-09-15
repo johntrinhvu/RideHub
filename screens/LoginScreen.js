@@ -44,6 +44,7 @@ const LoginScreen = () => {
                     style={styles.animation}
                 />
             </Animated.View>
+            
         </SafeAreaView>
     );
 }
