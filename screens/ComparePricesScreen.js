@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Linking } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
+import MapComponent from "../components/MapComponent";
 import BottomSheet from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -8,59 +9,97 @@ const ComparePricesScreen = () => {
     const navigation = useNavigation();
     const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
 
-    const rideOptions = {
-        uber: [
-            { price: 10.50, distance: 3.5, eta: 8 },
-            { price: 15.75, distance: 2.8, eta: 6 },
-            { price: 20.00, distance: 1.5, eta: 4 },
-        ],
-        lyft: [
-            { price: 11.25, distance: 3.7, eta: 9 },
-            { price: 16.50, distance: 3.0, eta: 7 },
-            { price: 21.75, distance: 1.7, eta: 5 },
-        ]
-    };
+    const generateRandomPrice = () => Number((Math.random() * 30 + 10).toFixed(2));
+    const generateRandomDistance = () => Number((Math.random() * 3 + 1).toFixed(1));
+    const generateRandomEta = () => Math.floor(Math.random() * 10 + 3);
 
-    const renderRideOptions = (company) => {
-        return rideOptions[company].map((option, index) => (
-            <View key={index} style={styles.optionRow}>
-                <Text style={[styles.price, company === 'lyft' && styles.lyftText]}>
-                    ${option.price.toFixed(2)}
-                </Text>
-                <Text style={[styles.distance, company === 'lyft' && styles.lyftText]}>
-                    {option.distance.toFixed(1)} mi
-                </Text>
-                <Text style={[styles.eta, company === 'lyft' && styles.lyftText]}>
-                    {option.eta} min
-                </Text>
-            </View>
-        ));
-    };
+    const rideOptions = useMemo(() => {
+        return Array(6).fill().map(() => ({
+            price: generateRandomPrice(),
+            distance: generateRandomDistance(),
+            eta: generateRandomEta()
+        })).sort((a, b) => a.price - b.price);
+    }, []);
 
-    const openApp = (appName) => {
-        const urls = {
-            uber: 'uber://',
-            lyft: 'lyft://'
+    const [selectedOption, setSelectedOption] = useState(null);
+
+    const renderRideOptions = (options, isWheelchairAccessible = false) => {
+        const getEtaColor = (eta) => {
+            if (eta <= 5) return '#28a745'; // Green
+            if (eta <= 10) return '#ffc107'; // Yellow
+            return '#dc3545'; // Red
         };
-        Linking.canOpenURL(urls[appName]).then(supported => {
-            if (supported) {
-                Linking.openURL(urls[appName]);
-            } else {
-                console.log(`Don't know how to open URI: ${urls[appName]}`);
-            }
+
+        return options.map((option, index) => {
+            const isSelected = selectedOption && 
+                selectedOption.index === index && 
+                selectedOption.isWheelchairAccessible === isWheelchairAccessible;
+            
+            // Calculate estimated arrival time
+            const now = new Date();
+            const estimatedArrival = new Date(now.getTime() + option.eta * 60000);
+            
+            return (
+                <TouchableOpacity
+                    key={index}
+                    style={[
+                        styles.optionContainer,
+                        isSelected && styles.selectedOptionContainer
+                    ]}
+                    onPress={() => handleOptionPress(index, isWheelchairAccessible)}
+                >
+                    <View style={styles.optionContent}>
+                        <Text style={[styles.optionText, styles.price]}>
+                            ${option.price.toFixed(2)}
+                        </Text>
+                        <Text style={[styles.optionText, styles.eta, { color: getEtaColor(option.eta) }]}>
+                            {option.eta} min
+                        </Text>
+                    </View>
+                    {isSelected && (
+                        <View style={styles.expandedContent}>
+                            <Text style={styles.expandedText}>
+                                {option.distance.toFixed(1)} mi away
+                            </Text>
+                            <Text style={styles.expandedText}>
+                                Estimated arrival: {estimatedArrival.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                            </Text>
+                        </View>
+                    )}
+                </TouchableOpacity>
+            );
         });
     };
 
-    const handleBackPress = () => {
-        navigation.popToTop();
+    const handleOptionPress = (index, isWheelchairAccessible) => {
+        setSelectedOption(prevSelected => 
+            prevSelected && prevSelected.index === index && prevSelected.isWheelchairAccessible === isWheelchairAccessible
+                ? null 
+                : { index, isWheelchairAccessible }
+        );
     };
+
+    const handleBackPress = () => {
+        navigation.goBack(); // This will navigate to the previous screen
+    };
+
+    const handleBookRide = () => {
+        // Implement booking logic here
+        console.log('Booking ride:', rideOptions[selectedOption]);
+    };
+
+    // Generate some wheelchair accessible options
+    const wheelchairAccessibleOptions = useMemo(() => {
+        return Array(3).fill().map(() => ({
+            price: generateRandomPrice() * 1.2, // Slightly more expensive
+            distance: generateRandomDistance(),
+            eta: generateRandomEta() + 5 // Slightly longer ETA
+        })).sort((a, b) => a.price - b.price);
+    }, []);
 
     return (
         <View style={styles.container}>
-            <View style={styles.mapContainer}>
-                <Text style={styles.mapPlaceholder}>Map View</Text>
-            </View>
-
+            <MapComponent />
             <BottomSheet
                 index={0}
                 snapPoints={snapPoints}
@@ -76,31 +115,21 @@ const ComparePricesScreen = () => {
                             <Ionicons name="arrow-back" size={24} color="#97BAE4" />
                             <Text style={styles.backText}>Back</Text>
                         </TouchableOpacity>
-                        <Text style={styles.headerTitle}>Compare Prices</Text>
+                        <Text style={styles.headerTitle}>Choose a Ride</Text>
                     </View>
-                    <View style={styles.columns}>
-                        <View style={styles.column}>
-                            <Text style={styles.columnTitle}>Uber</Text>
-                            {renderRideOptions('uber')}
-                            <TouchableOpacity 
-                                style={[styles.appButton, styles.uberButton]} 
-                                onPress={() => openApp('uber')}
-                            >
-                                <Text style={styles.appButtonText}>Uber $69.69</Text>
-                            </TouchableOpacity>
+                    <ScrollView style={styles.rideOptionsContainer}>
+                        {renderRideOptions(rideOptions)}
+                        <View style={styles.sectionDivider} />
+                        <View style={styles.sectionTitleContainer}>
+                            <Text style={styles.sectionTitle}>Wheelchair Accessible Vehicles</Text>
                         </View>
-                        <View style={styles.columnSeparator} />
-                        <View style={styles.column}>
-                            <Text style={[styles.columnTitle, styles.lyftTitle]}>Lyft</Text>
-                            {renderRideOptions('lyft')}
-                            <TouchableOpacity 
-                                style={[styles.appButton, styles.lyftButton]} 
-                                onPress={() => openApp('lyft')}
-                            >
-                                <Text style={styles.appButtonText}>Lyft $69.69</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+                        {renderRideOptions(wheelchairAccessibleOptions, true)}
+                    </ScrollView>
+                    {selectedOption !== null && (
+                        <TouchableOpacity style={styles.bookButton} onPress={handleBookRide}>
+                            <Text style={styles.bookButtonText}>Book Ride</Text>
+                        </TouchableOpacity>
+                    )}
                 </SafeAreaView>
             </BottomSheet>
         </View>
@@ -139,11 +168,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginBottom: 20,
         position: 'relative',
-        paddingHorizontal: 16,
     },
     backButtonContainer: {
         position: 'absolute',
-        left: 16,
+        left: 10, // Changed from 0 to 10
         flexDirection: 'row',
         alignItems: 'center',
     },
@@ -153,77 +181,83 @@ const styles = StyleSheet.create({
         marginLeft: 5,
     },
     headerTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#FFFFFF',
+    },
+    rideOptionsContainer: {
+        marginTop: 10,
+        marginBottom: 80,
+    },
+    optionContainer: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        marginBottom: 8,
+        borderWidth: 1,
+        borderColor: '#97BAE4',
+        borderRadius: 8,
+    },
+    selectedOptionContainer: {
+        borderWidth: 2,
+        borderColor: '#007AFF',
+        backgroundColor: 'rgba(151, 186, 228, 0.1)',
+    },
+    optionContent: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    optionText: {
+        fontSize: 16,
+    },
+    price: {
+        fontWeight: 'bold',
+        color: '#97BAE4',
+    },
+    eta: {
+        // Remove the color property from here, as it will be set dynamically
+    },
+    expandedContent: {
+        marginTop: 10,
+        paddingTop: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#97BAE4',
+    },
+    expandedText: {
+        fontSize: 14,
+        color: '#FFFFFF',
+        marginBottom: 5,
+    },
+    bookButton: {
+        position: 'absolute',
+        bottom: 35, // Increased from 25 to 35
+        left: 16,
+        right: 16,
+        backgroundColor: '#007AFF',
+        paddingVertical: 14,
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    bookButtonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    sectionDivider: {
+        height: 1,
+        backgroundColor: '#97BAE4',
+        marginVertical: 15,
+    },
+    sectionTitleContainer: {
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         color: '#FFFFFF',
-    },
-    columns: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    column: {
-        flex: 1,
-        alignItems: 'center',
-    },
-    columnSeparator: {
-        width: 10,
-    },
-    columnTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#FFFFFF',
-    },
-    lyftTitle: {
-        color: '#FF00BF',
-        fontFamily: 'Gotham-Bold',
-    },
-    lyftText: {
-        fontFamily: 'Gotham-Book',
-    },
-    optionRow: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 8,
-    },
-    price: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        width: 50,
-        marginRight: 10,
-        color: '#97BAE4',
-        textAlign: 'right',
-    },
-    distance: {
-        fontSize: 14,
-        color: '#007AFF',
-        width: 50,
-        marginRight: 10,
-        textAlign: 'center',
-    },
-    eta: {
-        fontSize: 14,
-        color: '#28a745',
-        width: 50,
-        textAlign: 'left',
-    },
-    appButton: {
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 20,
-        marginTop: 10,
-    },
-    uberButton: {
-        backgroundColor: '#C8F7C5',
-    },
-    lyftButton: {
-        backgroundColor: '#F7C8F5',
-    },
-    appButtonText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#000000',
         textAlign: 'center',
     },
 });
