@@ -1,4 +1,3 @@
-import { View, Text } from 'react-native';
 import React, { useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import MapView, { Marker } from 'react-native-maps';

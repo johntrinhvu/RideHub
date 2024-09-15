@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { selectTravelTimeInformation } from '../slices/navSlice';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GOOGLE_API_KEY } from "@env";
+import { Linking } from "react-native";
 
 const ComparePricesScreen = () => {
     const navigation = useNavigation();
@@ -56,11 +57,16 @@ const ComparePricesScreen = () => {
     const generateRandomDistance = () => Number((Math.random() * 3 + 1).toFixed(1));
     const generateRandomEta = () => Math.floor(Math.random() * 10) + 3;
 
+    const getRandomRideService = () => {
+        return Math.random() > 0.5 ? "Uber" : "Lyft";
+    }
+
     const rideOptions = useMemo(() => {
         return Array(6).fill().map(() => ({
             price: generateRandomPrice(),
             distance: generateRandomDistance(),
-            eta: generateRandomEta()
+            eta: generateRandomEta(),
+            service: getRandomRideService(),
         })).sort((a, b) => a.price - b.price);
     }, []);
 
@@ -73,6 +79,11 @@ const ComparePricesScreen = () => {
             return '#dc3545'; // Red
         };
 
+        const handleVisitService = (service) => {
+            const serviceUrl = service === "Uber" ? "https://www.uber.com" : "https://www.lyft.com";
+            Linking.openURL(serviceUrl);
+        }
+
         return options.map((option, index) => {
             const isSelected = selectedOption && 
                 selectedOption.index === index && 
@@ -81,6 +92,10 @@ const ComparePricesScreen = () => {
             // Calculate estimated arrival time
             const now = new Date();
             const estimatedArrival = new Date(now.getTime() + option.eta * 60000);
+
+            // Apply conditional styles for Lyft or Uber
+            const serviceStyle = option.service === 'Lyft' ? styles.lyftService : styles.uberService;
+            const serviceTextStyle = option.service === 'Lyft' ? styles.lyftServiceText : styles.uberServiceText;
             
             return (
                 <TouchableOpacity
@@ -93,26 +108,39 @@ const ComparePricesScreen = () => {
                 >
                     <View style={styles.optionContent}>
                         <Text style={[styles.optionText, styles.price]}>
-                            {/* ${option.price.toFixed(2)} */}
-                            {new Intl.NumberFormat('en-us', {
+                            ${option.price.toFixed(2)}
+                            {/* {new Intl.NumberFormat('en-us', {
                                 style: 'currency',
                                 currency: 'USD',
                             }).format(
                                 (travelTimeInformation?.duration.value * SURGE_CHARGE_RATE * aiMultiplier) / 100
-                            )}
+                            )} */}
                         </Text>
-                        <Text style={[styles.optionText, styles.eta, { color: getEtaColor(option.eta) }]}>
-                            {option.eta} mins away
-                        </Text>
+                        <View className="flex flex-row">
+                            <View style={[serviceStyle]} className="mr-5">
+                                <Text style={[serviceTextStyle]}>{option.service}</Text>
+                            </View>
+                            <Text style={[styles.optionText, styles.eta, { color: getEtaColor(option.eta) }]}>
+                                {option.eta} mins away
+                            </Text>
+                        </View>
                     </View>
                     {isSelected && (
-                        <View style={styles.expandedContent}>
-                            <Text style={styles.expandedText}>
-                                {option.distance.toFixed(1)} mi away
-                            </Text>
-                            <Text style={styles.expandedText}>
-                                Estimated arrival: {estimatedArrival.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                            </Text>
+                        <View style={styles.expandedContent} className="flex flex-row justify-between">
+                            <View className="flex flex-col">
+                                <Text style={styles.expandedText}>
+                                    {option.distance.toFixed(1)} mi away
+                                </Text>
+                                <Text style={styles.expandedText}>
+                                    Estimated arrival: {estimatedArrival.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                </Text>
+                            </View>
+                            <TouchableOpacity
+                                style={styles.visitButton}
+                                onPress={() => handleVisitService(option.service)}
+                            >
+                                <Text style={styles.visitButtonText}>Visit {option.service}</Text>
+                            </TouchableOpacity>
                         </View>
                     )}
                 </TouchableOpacity>
@@ -132,17 +160,13 @@ const ComparePricesScreen = () => {
         navigation.goBack(); // This will navigate to the previous screen
     };
 
-    const handleBookRide = () => {
-        // Implement booking logic here
-        console.log('Booking ride:', rideOptions[selectedOption]);
-    };
-
     // Generate some wheelchair accessible options
     const wheelchairAccessibleOptions = useMemo(() => {
         return Array(3).fill().map(() => ({
             price: generateRandomPrice() * 1.2, // Slightly more expensive
             distance: generateRandomDistance(),
-            eta: generateRandomEta() + 5 // Slightly longer ETA
+            eta: generateRandomEta() + 5, // Slightly longer ETA
+            service: getRandomRideService()
         })).sort((a, b) => a.price - b.price);
     }, []);
 
@@ -176,11 +200,6 @@ const ComparePricesScreen = () => {
                         </View>
                         {renderRideOptions(wheelchairAccessibleOptions, true)}
                     </ScrollView>
-                    {selectedOption !== null && (
-                        <TouchableOpacity style={styles.bookButton} onPress={handleBookRide}>
-                            <Text style={styles.bookButtonText}>Book Ride</Text>
-                        </TouchableOpacity>
-                    )}
                 </SafeAreaView>
             </BottomSheet>
         </View>
@@ -310,6 +329,39 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#FFFFFF',
         textAlign: 'center',
+    },
+    lyftService: {
+        backgroundColor: '#FF00BF',  // Pink background for Lyft
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 4,
+    },
+    lyftServiceText: {
+        color: 'white',  // White text for Lyft
+        fontWeight: 'bold',
+    },
+    uberService: {
+        backgroundColor: '#000000',  // Black background for Uber
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 4,
+    },
+    uberServiceText: {
+        color: 'white',  // White text for Uber
+        fontWeight: 'bold',
+    },
+    visitButton: {
+        marginTop: 10,
+        backgroundColor: '#007AFF', // Blue button for "Visit {service}"
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 6,
+        alignItems: 'center',
+    },
+    visitButtonText: {
+        color: 'white',
+        fontSize: 14,
+        fontWeight: 'bold',
     },
 });
 
