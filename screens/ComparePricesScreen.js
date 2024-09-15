@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import MapComponent from "../components/MapComponent";
 import BottomSheet from '@gorhom/bottom-sheet';
@@ -6,14 +6,51 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from "react-redux";
 import { selectTravelTimeInformation } from '../slices/navSlice';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GOOGLE_API_KEY } from "@env";
 
 const ComparePricesScreen = () => {
     const navigation = useNavigation();
     const snapPoints = useMemo(() => ['25%', '50%', '90%'], []);
     const travelTimeInformation = useSelector(selectTravelTimeInformation);
     const SURGE_CHARGE_RATE = 1.5;
-    const Uber = [];
-    const Lyft = [];
+
+    // Memo table for the non-repeated values
+    const genAI = useMemo(() => new GoogleGenerativeAI(GOOGLE_API_KEY), []);
+    const [aiMultiplier, setAiMultiplier] = useState(Array(9).fill(1));
+
+    const getAIMultiplier = async (distance, duration) => {
+        try {
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const prompt = `Based on a ride distance of ${distance} miles and a duration of ${duration} minutes, generate
+            a price multiplier in floating point with 2 decimal places. Do not give me any text other than the value of the multiplier itself.`;
+
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            const generatedText = response.text();
+            console.log("Generated text: ", generatedText);
+
+            // response correctly handled
+            const multiplier = parseFloat(generatedText);
+            return isNaN(multiplier) ? 1 : multiplier;
+
+        } catch (error) {
+            console.error("Error gen AI mult: ", error);
+            return 1;
+        }
+    }
+
+    // run ai mult logic once
+    useEffect(() => {
+        if (travelTimeInformation && aiMultiplier === 1) { // run if hasn't been set
+            const distance = travelTimeInformation.distance.value / 1609.34;
+            const duration = travelTimeInformation.duration.value / 60;
+
+            getAIMultiplier(distance, duration).then(multiplier => {
+                setAiMultiplier(multiplier);
+            })
+        }
+    }, [travelTimeInformation]);
 
     const generateRandomPrice = () => Number((Math.random() * 30 + 10).toFixed(2));
     const generateRandomDistance = () => Number((Math.random() * 3 + 1).toFixed(1));
@@ -61,7 +98,7 @@ const ComparePricesScreen = () => {
                                 style: 'currency',
                                 currency: 'USD',
                             }).format(
-                                (travelTimeInformation?.duration.value * SURGE_CHARGE_RATE * (0.5 / option.distance)) / 100
+                                (travelTimeInformation?.duration.value * SURGE_CHARGE_RATE * aiMultiplier) / 100
                             )}
                         </Text>
                         <Text style={[styles.optionText, styles.eta, { color: getEtaColor(option.eta) }]}>
